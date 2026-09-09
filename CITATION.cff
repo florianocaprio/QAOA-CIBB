@@ -1,0 +1,7 @@
+cff-version: 1.2.0
+message: "If you use this repository, cite the associated manuscript and the UCI dataset."
+title: "QAOA-CIBB: Quantum-Assisted Clinical Risk Factor Selection for Diabetes Readmission Prediction"
+type: software
+repository-code: "https://github.com/florianocaprio/QAOA-CIBB"
+abstract: "Reproducible software research project for QUBO/QAOA clinical feature selection on the UCI Diabetes 130-US Hospitals dataset."
+

@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+
+# Environments and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Notebooks and local tooling
+.ipynb_checkpoints/
+.DS_Store
+.idea/
+.vscode/
+
+# Generated experiment artifacts
+data/processed/
+data/interim/
+results/**/*.json
+results/**/*.csv
+results/**/*.png
+results/**/*.pdf
+!results/**/.gitkeep
+mlruns/
+wandb/
+
