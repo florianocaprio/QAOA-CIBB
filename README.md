@@ -29,6 +29,10 @@ E(x) = -alpha * sum_i(r_i*x_i)
 
 con default confermati `alpha=1.0`, `beta=0.5`, `gamma=2.0`. L’energia è un criterio di selezione, non una probabilità clinica. QAOA seleziona le variabili; la regressione logistica stima il rischio.
 
+### Baseline LASSO/L1
+
+La baseline clinica binaria è una regressione logistica penalizzata L1. Le feature attive sono ordinate per valore assoluto del coefficiente e vengono mantenuti i primi `k` predittori. In questo progetto “LASSO” indica quindi selezione di feature mediante regressione logistica L1, non regressione LASSO lineare sul target binario.
+
 ## Installazione riproducibile
 
 Sono supportati Python 3.11 e 3.12. Le versioni effettivamente verificate il 9 settembre 2026 sono bloccate in `requirements.lock`.

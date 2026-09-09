@@ -12,6 +12,19 @@ from quantum_risk.qubo import QuboModel
 L1_C_GRID = (0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0, 100.0)
 
 
+def _build_l1_logistic_model(
+    c_value: float, seed: int, class_weight: str | None
+) -> LogisticRegression:
+    return LogisticRegression(
+        penalty="l1",
+        solver="liblinear",
+        C=c_value,
+        class_weight=class_weight,
+        max_iter=2000,
+        random_state=seed,
+    )
+
+
 def top_k_bits(scores: np.ndarray, names: list[str], k: int) -> np.ndarray:
     order = np.lexsort((np.asarray(names), -np.asarray(scores)))
     bits = np.zeros(len(names), dtype=np.int8)
@@ -29,14 +42,7 @@ def l1_ranked_top_k(
     tolerance: float = 1e-10,
 ) -> tuple[np.ndarray | None, float | None, str]:
     for c_value in L1_C_GRID:
-        model = LogisticRegression(
-            solver="liblinear",
-            l1_ratio=1.0,
-            C=c_value,
-            class_weight=class_weight,
-            max_iter=2000,
-            random_state=seed,
-        )
+        model = _build_l1_logistic_model(c_value, seed, class_weight)
         model.fit(train, y_train)
         coefficients = np.abs(model.coef_[0])
         if int((coefficients > tolerance).sum()) >= k:

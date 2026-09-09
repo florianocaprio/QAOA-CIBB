@@ -206,6 +206,9 @@ with tabs[2]:
 with tabs[3]:
     st.subheader("Metriche calcolate")
     st.caption(
+        "LASSO: L1-penalized logistic regression used to rank and select clinical features."
+    )
+    st.caption(
         "AUC misura discriminazione, non la percentuale di pazienti classificati "
         "correttamente. Differenze piccole non dimostrano superiorità clinica."
     )

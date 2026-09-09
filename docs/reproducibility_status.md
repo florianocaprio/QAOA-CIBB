@@ -24,7 +24,7 @@
 - Imputazione fitted sul training, one-hot encoding, scaling delle numeriche.
 - Pool automatico di colonne codificate ordinato per MI del training con pareggio per nome.
 - Logistica L2, `C=1`, `class_weight=balanced`, soglia 0.5.
-- L1-ranked-top-k con griglia di `C` dichiarata; SA con 1000 reads e 1000 sweeps.
+- LASSO/L1 baseline: implemented as L1-penalized logistic regression with liblinear solver. La procedura prova la griglia dichiarata di `C` in ordine crescente, ordina solo i coefficienti attivi per valore assoluto e conserva i primi `k`; se gli attivi sono insufficienti non completa artificialmente il subset.
 - COBYLA, inizializzazioni casuali registrate, QAOA esplicito su Aer.
 - Stabilità: Jaccard medio tra fold su nomi canonici.
 - Raggruppamento ICD-9 implementato come ricostruzione versionata, non come ricetta certificata degli esperimenti originali.
