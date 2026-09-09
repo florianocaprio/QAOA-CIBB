@@ -1,86 +1,124 @@
-# QAOA-CIBB
+# QAOA-CIBB Quantum Risk Lab
 
-Research repository for **Quantum-Assisted Clinical Risk Factor Selection for Diabetes Readmission Prediction**.
+Applicazione scientifica riproducibile a supporto dell’articolo **Quantum-Assisted Clinical Risk Factor Selection for Diabetes Readmission Prediction**. Il motore seleziona colonne cliniche con un obiettivo QUBO, esegue realmente QAOA tramite Qiskit Aer, confronta metodi classici e valuta i subset mediante regressione logistica.
 
-The project will provide a reproducible software implementation of the manuscript's QUBO/QAOA feature-selection framework for predicting hospital readmission within 30 days on the UCI Diabetes 130-US Hospitals dataset.
+> Stato: prima release sperimentale. Il software produce nuovi risultati calcolati e non promette di ricostruire esattamente i numeri del manoscritto. Non è un dispositivo medico e non è validato per decisioni cliniche.
 
-> Status: repository scaffold. The manuscript is a working draft and its numerical results have not yet been reproduced by code in this repository.
+## Che cosa calcola
 
-## Research question
+Il target è `y=1` per `readmitted == "<30"` e `y=0` per `">30"` o `"NO"`. `patient_nbr` determina i gruppi della cross-validation e non entra mai nei predittori; `encounter_id` è conservato per la tracciabilità.
 
-Can a QUBO objective balancing feature relevance, pairwise redundancy, and subset cardinality identify compact and interpretable clinical feature sets while retaining competitive predictive performance?
+Per ogni training fold il motore:
 
-The intended objective is
+1. imputa e codifica i dati senza osservare il test;
+2. raggruppa `diag_1`, `diag_2` e `diag_3` con una mappatura ICD-9 versionata;
+3. costruisce un pool esplorativo di `N` colonne codificate mediante mutual information;
+4. calcola rilevanza MI min-max e ridondanza come correlazione assoluta di Pearson;
+5. costruisce il QUBO e la conversione Ising;
+6. seleziona subset con MI, L1-ranked-top-k, simulated annealing, random-k e QAOA;
+7. addestra una regressione logistica L2 sulle feature selezionate;
+8. salva predizioni out-of-fold, metriche, manifest, QUBO, Ising, counts e log QAOA.
+
+L’obiettivo è:
 
 ```text
-min_x  -alpha * sum_i(r_i x_i)
-       + beta * sum_{i<j}(c_ij x_i x_j)
-       + gamma * (sum_i(x_i) - k)^2,
+E(x) = -alpha * sum_i(r_i*x_i)
+       + beta * sum_{i<j}(c_ij*x_i*x_j)
+       + gamma * (sum_i(x_i)-k)^2
 ```
 
-where `x_i` indicates whether feature `i` is selected, `r_i` is its relevance to early readmission, `c_ij` measures pairwise redundancy, and `k` is the target subset size.
+con default confermati `alpha=1.0`, `beta=0.5`, `gamma=2.0`. L’energia è un criterio di selezione, non una probabilità clinica. QAOA seleziona le variabili; la regressione logistica stima il rischio.
 
-## Repository contents
+## Installazione riproducibile
 
-```text
-QAOA-CIBB/
-├── configs/              experiment configurations (to be implemented)
-├── data/
-│   ├── README.md         provenance, license, target and handling notes
-│   └── raw/              unmodified official UCI files
-├── docs/
-│   ├── paper/            manuscript source and PDF export
-│   ├── template/         supplied CIBB publication template
-│   └── reproducibility-plan.md
-├── notebooks/            exploratory analyses (to be implemented)
-├── results/
-│   ├── figures/          generated figures only
-│   └── tables/           generated tables only
-├── scripts/              command-line entry points (to be implemented)
-├── src/qaoa_cibb/        reusable implementation (to be implemented)
-└── tests/                automated tests (to be implemented)
+Sono supportati Python 3.11 e 3.12. Le versioni effettivamente verificate il 9 settembre 2026 sono bloccate in `requirements.lock`.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements.lock
+pip install -e . --no-deps
 ```
 
-## Primary endpoint
+Versioni centrali verificate: Qiskit 2.5.2, Qiskit Aer 0.17.2, scikit-learn 1.9.0, NumPy 2.4.6, pandas 2.3.3, SciPy 1.17.1, D-Wave samplers 1.8.0 e Streamlit 1.63.0.
 
-The original `readmitted` field has three values. The planned binary target is:
+## Comandi
 
-- positive: `<30`;
-- negative: `>30` or `NO`.
+```bash
+# Controllo preventivo di memoria, qubit e costo
+quantum-risk preflight configs/quick.yaml
 
-Any feature selection, preprocessing, imputation, encoding and scaling must be fitted only on the training portion of each split to prevent leakage. Patient-level splitting should be evaluated because the same `patient_nbr` can occur in more than one encounter.
+# Smoke test reale ridotto sul dataset UCI
+quantum-risk run configs/smoke.yaml
 
-## Planned experimental workflow
+# Benchmark rapido previsto dalla specifica
+quantum-risk run configs/quick.yaml
 
-1. Validate the raw data against the recorded checksums.
-2. Audit missing values, repeated patients, outcome imbalance and excluded variables.
-3. Define a leakage-safe candidate pool of 40 clinically interpretable variables.
-4. Fit preprocessing and relevance/redundancy estimators inside each training split.
-5. Build the QUBO and verify its energy against the mathematical objective.
-6. Solve the same instances with QAOA and classical baselines.
-7. Train downstream classifiers on each selected subset.
-8. Report AUC, balanced accuracy, F1, precision, recall, specificity, redundancy, compactness and selection stability.
-9. Record seeds, split identifiers, package versions, solver settings and QPU metadata.
+# Processo separato, stato e cancellazione
+quantum-risk launch configs/quick.yaml
+quantum-risk status ID_JOB
+quantum-risk cancel ID_JOB
 
-Planned feature-selection baselines are all candidate features, mutual-information top-k, LASSO-based selection and simulated annealing on the same QUBO. Planned target sizes are `k = 5`, `10` and `15`.
+# Dashboard italiana
+streamlit run app.py
 
-## Documents
+# Test e qualità
+ruff check src app.py tests
+pytest -q
+```
 
-- [`docs/paper/Quantum_Risk.pdf`](docs/paper/Quantum_Risk.pdf): PDF export of the supplied manuscript.
-- [`docs/paper/Quantum_Risk.docx`](docs/paper/Quantum_Risk.docx): supplied editable manuscript.
-- [`docs/template/CIBB_Template_6884.pdf`](docs/template/CIBB_Template_6884.pdf): supplied CIBB template/reference.
+## Preset
 
-## Dataset
+- `smoke`: N=6, k=3, due fold e budget minimo; verifica l’intera catena.
+- `quick`: N=12, k=5, p=1, tre fold, massimo 2.000 pazienti campionati deterministicamente con tutti i relativi ricoveri.
+- `benchmark`: cinque fold, k=5/10/15, p=1/2 e simulazione MPS; è oneroso e non garantisce scalabilità per QUBO densi.
+- `paper_reference`: carica N=40 e i riferimenti storici, ma non esegue QAOA senza il manifest originale.
 
-The raw dataset is included under `data/raw/` exactly as distributed in the official UCI archive. See [`data/README.md`](data/README.md) for provenance, attribution, license, checksums and responsible-use notes.
+N è il numero di variabili binarie e coincide con i qubit usati nella codifica diretta. Selezionare k=5 da N=40 richiede comunque 40 qubit. Uno statevector N=40 richiederebbe 16 TiB per il solo stato complesso in doppia precisione ed è bloccato dal preflight.
 
-Official source: [UCI Machine Learning Repository, dataset 296](https://archive.ics.uci.edu/dataset/296/diabetes-130-us-hospitals-for-years-1999-2008), DOI [10.24432/C5230J](https://doi.org/10.24432/C5230J).
+## Output di un run
 
-## Reproducibility status
+Ogni cartella sotto `runs/` contiene configurazione, stato atomico, hash del dataset e degli split, versioni software, manifest per fold, MI, matrice di ridondanza, QUBO/Ising, campioni SA, counts e traccia QAOA, predizioni, metriche per fold, riepilogo media/deviazione standard, metriche OOF aggregate, tabella LaTeX e grafici PNG/SVG. `runs/` è ignorata da Git per evitare di committare output locali pesanti.
 
-No implementation or executable environment has been selected yet. Dependency files and run commands will be added with the software implementation, rather than prematurely fixing a stack. The expected controls and acceptance criteria are documented in [`docs/reproducibility-plan.md`](docs/reproducibility-plan.md).
+I valori sono separati tramite `source`:
 
-## Licensing and citation
+- `computed_classical`;
+- `computed_qaoa_simulation`;
+- `external_qpu` per import hardware validato;
+- `paper_reference` per valori trascritti dal manoscritto.
 
-The UCI dataset is distributed under CC BY 4.0 and retains its own attribution requirements. The manuscript and CIBB template are included as research inputs; no separate reuse license is asserted for them. A software license will be added when the implementation is introduced and the copyright holders are confirmed.
+Una simulazione Aer, anche rumorosa, non è un’esecuzione IQM. Un import hardware richiede backend, run ID, N, k, p, shot, counts, ordine delle feature e hash di QUBO, preprocessing e split.
 
+## Dashboard
+
+La dashboard contiene cinque schede: Esperimento, Selezione, QAOA, Risultati ed Esportazioni. Prima di un run non mostra metriche dimostrative. I riferimenti storici sono disattivati per default e visivamente identificati come tali. Le esecuzioni partono in un processo separato dal rendering Streamlit e possono essere interrotte.
+
+## Dataset e documenti
+
+Il dataset raw ufficiale UCI 296 è conservato senza modifiche sotto `data/raw/`. Provenienza, DOI, licenza CC BY 4.0, checksum e limiti sono descritti in [`data/README.md`](data/README.md).
+
+- [`docs/paper/Quantum_Risk.pdf`](docs/paper/Quantum_Risk.pdf): manoscritto di lavoro.
+- [`docs/paper/Quantum_Risk.docx`](docs/paper/Quantum_Risk.docx): sorgente editabile, non modificato dal software.
+- [`docs/template/CIBB_Template_6884.pdf`](docs/template/CIBB_Template_6884.pdf): template editoriale CIBB, non fonte dei risultati.
+- [`docs/reproducibility_status.md`](docs/reproducibility_status.md): fatti confermati, default e informazioni mancanti.
+- [`docs/reproducibility-plan.md`](docs/reproducibility-plan.md): criteri di verifica.
+
+## Limiti scientifici
+
+Il manifest originale delle 40 feature, gli split, i seed, gli shot, l’ottimizzatore e i raw counts hardware non sono disponibili. La modalità automatica seleziona colonne one-hot, non gruppi di variabili cliniche. I risultati sono quindi una ricostruzione esplorativa controllata, non una replica certificata.
+
+Il dataset riguarda ospedali statunitensi nel periodo 1999–2008, contiene attributi demografici sensibili ed è sbilanciato. Associazione predittiva non implica causalità, un’AUC leggermente maggiore non prova superiorità e nessun subset è automaticamente utile in clinica.
+
+## Fonti tecniche
+
+Fonti ufficiali consultate il 9 settembre 2026:
+
+- [UCI dataset 296](https://archive.ics.uci.edu/dataset/296/diabetes-130-us-hospitals-for-years-1999-2008)
+- [Qiskit qaoa_ansatz](https://quantum.cloud.ibm.com/docs/en/api/qiskit/qiskit.circuit.library.qaoa_ansatz)
+- [Qiskit bit ordering](https://quantum.cloud.ibm.com/docs/en/guides/bit-ordering)
+- [Qiskit AerSimulator](https://qiskit.github.io/qiskit-aer/stubs/qiskit_aer.AerSimulator.html)
+- [scikit-learn StratifiedGroupKFold](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedGroupKFold.html)
+- [D-Wave SimulatedAnnealingSampler](https://docs.dwavequantum.com/en/latest/ocean/api_ref_samplers/generated/dwave.samplers.SimulatedAnnealingSampler.sample.html)
+
+Le fonti descrivono algoritmi e API; non certificano i risultati prodotti da questo repository.

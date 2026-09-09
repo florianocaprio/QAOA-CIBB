@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quantum-risk-lab"
+version = "0.1.0"
+description = "Motore sperimentale QUBO/QAOA per la selezione di fattori di rischio di riammissione"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "numpy>=2.0,<3",
+  "pandas>=2.2,<3",
+  "scipy>=1.14,<2",
+  "scikit-learn>=1.6,<2",
+  "qiskit>=2.0,<3",
+  "qiskit-aer>=0.17,<0.18",
+  "dimod>=0.12,<0.13",
+  "dwave-samplers>=1.6,<2",
+  "streamlit>=1.48,<2",
+  "plotly>=6,<7",
+  "matplotlib>=3.9,<4",
+  "pydantic>=2.10,<3",
+  "PyYAML>=6,<7",
+  "psutil>=6,<8",
+  "ucimlrepo>=0.0.7,<0.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "pytest-cov>=6,<8", "ruff>=0.12,<1"]
+
+[project.scripts]
+quantum-risk = "quantum_risk.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
