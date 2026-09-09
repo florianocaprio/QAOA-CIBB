@@ -92,7 +92,8 @@ I valori sono separati tramite `source`:
 - `external_qpu` per import hardware validato;
 - `paper_reference` per valori trascritti dal manoscritto.
 
-Una simulazione Aer, anche rumorosa, non è un’esecuzione IQM. Un import hardware richiede backend, run ID, N, k, p, shot, counts, ordine delle feature e hash di QUBO, preprocessing e split.
+Una simulazione Aer, anche rumorosa, non è un’esecuzione IQM. Un import hardware richiede le credenziali nel codice per accedere al sistema e backend, run ID, N, k, p, shot, counts, ordine delle feature e hash di QUBO, preprocessing e split.
+Il software è stato testato con le credenziali IQM e l'accesso al loro sistema da 54Qbit. Se lo vi vuol rendere operativo con il test reale bisogna procurarsi un account cloud sui sistemi IQM.
 
 ## Dashboard
 
@@ -116,7 +117,7 @@ Il dataset riguarda ospedali statunitensi nel periodo 1999–2008, contiene attr
 
 ## Fonti tecniche
 
-Fonti ufficiali consultate il 9 settembre 2026:
+Fonti ufficiali consultate il 9 Aprile 2026:
 
 - [UCI dataset 296](https://archive.ics.uci.edu/dataset/296/diabetes-130-us-hospitals-for-years-1999-2008)
 - [Qiskit qaoa_ansatz](https://quantum.cloud.ibm.com/docs/en/api/qiskit/qiskit.circuit.library.qaoa_ansatz)
