@@ -1,0 +1,27 @@
+name: paper_reference
+dataset_path: data/raw/diabetic_data.csv
+mapping_path: data/raw/IDS_mapping.csv
+output_root: runs
+seed: 42
+n_candidates: 40
+q_budget: 54
+k_values: [5, 10, 15]
+p_values: [1, 2]
+n_splits: 5
+max_patients: null
+alpha_relevance: 1.0
+beta_redundancy: 0.5
+gamma_cardinality: 2.0
+simulator: mps
+qaoa_restarts: 3
+optimization_shots: 2048
+final_shots: 8192
+max_objective_evaluations: 150
+statevector_memory_fraction: 0.5
+mps_max_bond_dimension: 128
+mps_truncation_threshold: 1.0e-12
+sa_num_reads: 1000
+sa_num_sweeps: 1000
+class_weight: balanced
+require_original_manifest: true
+run_qaoa: false

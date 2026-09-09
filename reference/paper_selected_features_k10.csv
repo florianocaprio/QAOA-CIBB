@@ -1,0 +1,12 @@
+source,N,k,p,rank,feature
+paper_reference,40,10,,1,number_inpatient
+paper_reference,40,10,,2,number_emergency
+paper_reference,40,10,,3,time_in_hospital
+paper_reference,40,10,,4,num_medications
+paper_reference,40,10,,5,number_diagnoses
+paper_reference,40,10,,6,A1Cresult
+paper_reference,40,10,,7,insulin
+paper_reference,40,10,,8,change
+paper_reference,40,10,,9,discharge_disposition
+paper_reference,40,10,,10,diag_1_circulatory
+

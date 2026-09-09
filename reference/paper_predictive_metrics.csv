@@ -1,0 +1,15 @@
+source,method,N,k,p,auc,recall_30day,f1,balanced_accuracy
+paper_reference,All features,40,40,,0.689,0.436,0.272,0.628
+paper_reference,MI,40,5,,0.631,0.361,0.235,0.579
+paper_reference,MI,40,10,,0.652,0.389,0.250,0.596
+paper_reference,MI,40,15,,0.664,0.404,0.259,0.606
+paper_reference,LASSO,40,5,,0.641,0.374,0.242,0.587
+paper_reference,LASSO,40,10,,0.664,0.407,0.259,0.607
+paper_reference,LASSO,40,15,,0.671,0.416,0.265,0.613
+paper_reference,SA-QUBO,40,5,,0.653,0.394,0.253,0.600
+paper_reference,SA-QUBO,40,10,,0.678,0.426,0.270,0.620
+paper_reference,SA-QUBO,40,15,,0.683,0.431,0.274,0.624
+paper_reference,QAOA-QPU,40,5,,0.642,0.377,0.244,0.589
+paper_reference,QAOA-QPU,40,10,,0.661,0.403,0.256,0.604
+paper_reference,QAOA-QPU,40,15,,0.668,0.412,0.263,0.611
+
