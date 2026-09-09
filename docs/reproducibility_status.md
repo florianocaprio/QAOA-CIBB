@@ -37,5 +37,6 @@
 - Definizione completa dello stability index storico.
 - Backend QPU, calibrazione, transpilation, layout, counts e identificativo dei run.
 
-Di conseguenza il motore produce una ricostruzione esplorativa riproducibile, non una replica certificata dei numeri storici. Il PDF sorgente effettivo del manoscritto è `docs/paper/Quantum_Risk.pdf`; `docs/template/CIBB_Template_6884.pdf` è un template editoriale.
+L’integrazione QPU diretta è intenzionalmente disabilitata nella prima release. La dashboard mostra lo stato delle credenziali IQM senza esporle e senza sostituire silenziosamente una richiesta hardware con una simulazione Aer. Sono accettati soltanto import JSON validati con provenienza completa.
 
+Di conseguenza il motore produce una ricostruzione esplorativa riproducibile, non una replica certificata dei numeri storici. Il PDF sorgente effettivo del manoscritto è `docs/paper/Quantum_Risk.pdf`; `docs/template/CIBB_Template_6884.pdf` è un template editoriale.

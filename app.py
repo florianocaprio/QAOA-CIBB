@@ -12,6 +12,7 @@ from quantum_risk.config import load_config, save_config
 from quantum_risk.data import deterministic_patient_subsample, load_uci_csv
 from quantum_risk.jobs import JobManager
 from quantum_risk.paper_reference import load_predictive_reference, load_quality_reference
+from quantum_risk.qpu import iqm_integration_status
 from quantum_risk.resources import preflight_quantum_run
 
 st.set_page_config(page_title="Quantum Risk Lab", page_icon="⚛️", layout="wide")
@@ -166,6 +167,8 @@ with tabs[2]:
         "L’energia QUBO non è una probabilità clinica e la frequenza di una "
         "bitstring non è il rischio di un paziente."
     )
+    qpu_status = iqm_integration_status()
+    st.caption(f"Stato QPU {qpu_status.provider}: {qpu_status.message}")
     if latest:
         fold = json.loads((latest / "fold_0.json").read_text())
         qaoa_runs = fold.get("qaoa", [])

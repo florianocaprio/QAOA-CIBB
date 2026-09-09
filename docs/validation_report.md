@@ -4,9 +4,9 @@ Data della verifica: 9 settembre 2026. Ambiente: macOS arm64, Python 3.11.4, dip
 
 ## Verifiche automatizzate
 
-Il comando `pytest -q` ha completato 31 test. Le verifiche coprono target e marcatori mancanti, mappatura ICD-9, categorie test non viste, separazione dei pazienti, normalizzazione MI, metriche note, contratto N/k/qubit, protezione RAM, import QPU validato, cancellazione job, ordine dei bit, counts, circuito Aer, confronto con `qaoa_ansatz`, confronto MPS/statevector, rendering della dashboard, un end-to-end UCI reale ridotto ed equivalenza matematica completa.
+Il comando `pytest -q` ha completato 33 test. Le verifiche coprono target e marcatori mancanti, mappatura ICD-9, categorie test non viste, separazione dei pazienti, normalizzazione MI, metriche note, contratto N/k/qubit, protezione RAM, import QPU validato, assenza di fallback QPU silenzioso, cancellazione job, ordine dei bit, counts, circuito Aer, confronto con `qaoa_ansatz`, confronto MPS/statevector, rendering della dashboard, un end-to-end UCI reale ridotto ed equivalenza matematica completa.
 
-La misura `pytest --cov=quantum_risk` ha rilevato una copertura complessiva dell’83% sul pacchetto scientifico.
+La misura `pytest --cov=src/quantum_risk --cov-report=term-missing` ha rilevato una copertura complessiva dell’84% sul pacchetto scientifico.
 
 Per N=7 sono state enumerate tutte le 128 bitstring e sono risultate equivalenti, entro tolleranza assoluta `1e-10`, le seguenti rappresentazioni: formula diretta, QUBO triangolare, matrice simmetrica e Hamiltoniana Ising. Il circuito QAOA esplicito coincide con l’ansatz Qiskit indipendente con fidelity 1 entro `1e-12` sul caso testato.
 
